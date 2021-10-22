@@ -1,43 +1,57 @@
 <?php
     namespace JosueCamelo\Http\Controllers;
     
-    class AuthController {
+    use JosueCamelo\Models\Usuario;
+    
+    class AuthController extends BaseController {
         private static $key = '123456'; //Application Key
+        private $usuarioModel;
+        
+        public function __construct(){
+            $this->usuarioModel = new Usuario();
+        }
         
         public function login(){
-
-            /*if ($_POST['email'] == 'teste@gmail.com' && $_POST['password'] == '123') {
-                //Header Token
-                $header = [
-                    'typ' => 'JWT',
-                    'alg' => 'HS256'
-                ];
-
-                //Payload - Content
-                $payload = [
-                    'name' => 'Rafael Capoani',
-                    'email' => $_POST['email'],
-                ];
-
-                //JSON
-                $header = json_encode($header);
-                $payload = json_encode($payload);
-
-                //Base 64
-                $header = self::base64UrlEncode($header);
-                $payload = self::base64UrlEncode($payload);
-
-                //Sign
-                $sign = hash_hmac('sha256', $header . "." . $payload, self::$key, true);
-                $sign = self::base64UrlEncode($sign);
-
-                //Token
-                $token = $header . '.' . $payload . '.' . $sign;
-
-                return $token;
+            try{
+                $res = $this->usuarioModel->autenticar($_POST['email'], $_POST['senha']);
+                if(count($res) == 1){
+                    $token = $this->getJwtToken($res);
+                    return $token;
+                }
+            }catch (\Exception $e) {
+                return $this->sendError([], 'Erro ao tentar autenticar');
             }
+        }
+        
+        protected function getJwtToken($data){
+             //Header Token
+             $header = [
+                 'typ' => 'JWT',
+                 'alg' => 'HS256'
+             ];
             
-            throw new \Exception('Não autenticado');*/
+             //Payload - Content
+             $payload = [
+                 'name' => $data[0]['nome'],
+                 'email' => $data[0]['email'],
+             ];
+             
+             //JSON
+             $header = json_encode($header);
+             $payload = json_encode($payload);
+            
+             //Base 64
+             $header = self::base64UrlEncode($header);
+             $payload = self::base64UrlEncode($payload);
+            
+             //Sign
+             $sign = hash_hmac('sha256', $header . "." . $payload, self::$key, true);
+             $sign = self::base64UrlEncode($sign);
+            
+             //Token
+             $token = $header . '.' . $payload . '.' . $sign;
+             
+             return $token;
         }
 
         public static function checkAuth()
