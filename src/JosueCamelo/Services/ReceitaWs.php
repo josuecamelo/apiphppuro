@@ -13,7 +13,7 @@ class ReceitaWs
         
         $headers = array(
             'Content-Type: application/json',
-            sprintf('Authorization: Bearer %s', '8154ea80438567b4b56877a297a7877baada70f54063d54c7780a68fa8caa733')
+            sprintf('Authorization: Bearer %s', '')
         );
         
         $curl = curl_init("https://www.receitaws.com.br/v1/cnpj/" . str_replace(['.', '-', '/'], '', $documento));
