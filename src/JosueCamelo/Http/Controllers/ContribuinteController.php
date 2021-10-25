@@ -4,6 +4,7 @@ namespace JosueCamelo\Http\Controllers;
 
 use JosueCamelo\Models\Contribuinte;
 use JosueCamelo\Models\Usuario;
+use JosueCamelo\Services\ReceitaWs;
 class ContribuinteController extends BaseController
 {
     private $contribuinteModel;
@@ -42,6 +43,16 @@ class ContribuinteController extends BaseController
       
         return $filtros;
     }
+    
+    public function search($documento){
+        try {
+            $empresa = ReceitaWs::consultar($documento);
+            return $empresa;
+        }catch (\Exception $e){
+            throw $e;
+        }
+    }
+    
     public function store()
     {
         if (AuthController::checkAuth()) {
