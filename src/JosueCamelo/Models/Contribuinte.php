@@ -12,6 +12,12 @@ class Contribuinte extends BaseModel
         'end_logradouro',  'end_numero',  'end_complemento',  'end_bairro',  'end_cidade',  'end_pais',  'observacoes', 'end_cidade',  'end_pais'
     ];
     
+    public function find($filtros = ""){
+        $sql = "SELECT * FROM $this->table ". $filtros;
+        $res = $this->getQueryBuilder()->queryExec($sql, []);
+        return $res;
+    }
+    
     public function getAll(){
         $res = $this->getQueryBuilder()->queryExec("SELECT * FROM $this->table", []);
         print_r($res);
@@ -22,8 +28,7 @@ class Contribuinte extends BaseModel
             $data['nome_fantasia'] = '';
         }
         
-        
-        $sql = "INSERT INTO `contribuintes` (`tipo_pessoa`, `tipo_contribuite`, `tipo_cadastro`, `documento`, `estado`, `ie`, `im`, ";
+        $sql = "INSERT INTO `contribuintes` (`tipo_pessoa`, `tipo_contribuinte`, `tipo_cadastro`, `documento`, `estado`, `ie`, `im`, ";
         $sql.= "`razao_social`, `nome_fantasia`, `telefone_principal`, `telefone_secundario`, `email`, `end_cep`, `end_logradouro`, ";
         $sql.= "`end_numero`, `end_complemento`, `end_bairro`, `end_cidade`, `end_pais`, `observacoes`)";
         $sql.= "VALUES ('".$data['tipo_pessoa']."', '".$data['tipo_contribuinte']."', '".$data['tipo_cadastro']."', ";

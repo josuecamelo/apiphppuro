@@ -12,6 +12,36 @@ class ContribuinteController extends BaseController
         $this->contribuinteModel = new Contribuinte();
     }
     
+    public function index(){
+        if (AuthController::checkAuth()) {
+            $filtro = $this->montarFiltros($_GET);
+            return $this->contribuinteModel->find($filtro);
+        }
+    }
+    
+    protected function montarFiltros($data){
+        $filtros = "";
+        if(isset($data['campos'])){
+            $campos = $data['campos'];
+            $filtros = " WHERE ";
+            
+            $chaves = array_keys($campos);
+            
+            foreach($chaves as $chave){
+                $filtros.= "(";
+                foreach($campos[$chave] as $key => $campo){
+                    if(end($campos[$chave]) == $campos[$chave][count($campos[$chave]) - 1]){
+                        $filtros.= " $chave = '$campo' OR ";
+                    }
+                }
+                $filtros = substr($filtros, 0, -3);
+                $filtros.= ") AND ";
+            }
+            $filtros = substr($filtros, 0, -4);
+        }
+      
+        return $filtros;
+    }
     public function store()
     {
         if (AuthController::checkAuth()) {
