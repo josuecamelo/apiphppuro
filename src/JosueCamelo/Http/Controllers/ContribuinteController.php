@@ -41,6 +41,32 @@ class ContribuinteController extends BaseController
         throw new \Exception('Não autenticado');
     }
     
+    public function update($identificador){
+        if (AuthController::checkAuth()) {
+            $errors = $this->validateData($_POST);
+        
+            if(!empty($errors)){
+                return ['validacao' => $errors];
+            }
+        
+            $updateOk = $this->contribuinteModel->update($identificador, $_POST);
+            
+            if($updateOk){
+                $this->validateEstado($_POST);
+            
+                return [
+                    'mensagem' => $this->msg,
+                ];
+            }else{
+                return [
+                    'mensagem' => 'Erro ao Inserir Contribuinte'
+                ];
+            }
+        }
+    
+        throw new \Exception('Não autenticado');
+    }
+    
     public function validateData($data)
     {
         $camposVazio = [];

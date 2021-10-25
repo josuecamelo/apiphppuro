@@ -37,8 +37,8 @@
 		{
 			if (class_exists('\JosueCamelo\Http\Controllers\\'.$this->class) && method_exists('\JosueCamelo\Http\Controllers\\'.$this->class, $this->method)) {
 				try {
-					$controll = "\JosueCamelo\Http\Controllers\\".$this->class;
-					$response = call_user_func_array(array(new $controll, $this->method), $this->params);
+					$controller = "\JosueCamelo\Http\Controllers\\".$this->class;
+					$response = call_user_func_array(array(new $controller, $this->method), $this->params);
 					return json_encode(array('data' => $response, 'status' => 'success'));
 				} catch (\Exception $e) {
 					return json_encode(array('data' => $e->getMessage(), 'status' => 'error'));

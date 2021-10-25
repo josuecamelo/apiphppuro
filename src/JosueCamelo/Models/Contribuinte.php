@@ -38,8 +38,53 @@ class Contribuinte extends BaseModel
         return TRUE;
     }
     
+    public function update($identificador, $data){
+        $campoWhere = 'id';
+        $busca = 0;
+        
+        $sql = "UPDATE $this->table SET ";
+        
+        foreach($data as $campo => $valorCampo){
+            $sql.= " $campo = '". $valorCampo."', ";
+        }
+        $sql = substr($sql, 0, -2);
+    
+        if(count($this->getId($identificador)) == 1){
+          $busca++;
+        }
+        
+        if(count($this->getByDocumento($identificador)) == 1){
+            $busca++;
+            $campoWhere = 'documento';
+        }
+        
+        if($busca == 0){
+            throw new \Exception('Não foi possível localizar nenhum contribuinte com o identificador passado');
+        }else{
+        
+        }
+        
+        $sql .= " WHERE $campoWhere = '$identificador'";
+        
+        try {
+            $this->getQueryBuilder()->getConection()->beginTransaction();
+            $this->getQueryBuilder()->queryExec($sql, []);
+            $this->getQueryBuilder()->getConection()->commit();
+        }catch (Exception $e){
+            $this->getQueryBuilder()->getConection()->rollback();
+            throw $e;
+        }
+    
+        return TRUE;
+    }
+    
     public function getByDocumento($documento){
         $res = $this->getQueryBuilder()->queryExec("SELECT * FROM $this->table where documento='$documento'", []);
+        return $res;
+    }
+    
+    public function getId($documento){
+        $res = $this->getQueryBuilder()->queryExec("SELECT * FROM $this->table where id=$documento", []);
         return $res;
     }
 }
