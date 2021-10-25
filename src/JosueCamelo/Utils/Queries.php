@@ -20,4 +20,8 @@ class Queries
         
         return $rows;
     }
+    
+    public function getConection(){
+        return $this->con;
+    }
 }

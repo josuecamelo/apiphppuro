@@ -39,7 +39,7 @@
 				try {
 					$controll = "\JosueCamelo\Http\Controllers\\".$this->class;
 					$response = call_user_func_array(array(new $controll, $this->method), $this->params);
-					return json_encode(array('data' => $response, 'status' => 'sucess'));
+					return json_encode(array('data' => $response, 'status' => 'success'));
 				} catch (\Exception $e) {
 					return json_encode(array('data' => $e->getMessage(), 'status' => 'error'));
 				}

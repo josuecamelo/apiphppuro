@@ -4,6 +4,8 @@ namespace JosueCamelo\Http\Controllers;
 
 class BaseController
 {
+    public $msg;
+    
     public function sendResponse($result, $message)
     {
         $response = [
