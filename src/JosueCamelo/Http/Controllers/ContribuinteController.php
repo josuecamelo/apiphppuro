@@ -111,6 +111,10 @@ class ContribuinteController extends BaseController
         return $camposVazio;
     }
     
+    public function delete($identificador){
+        $this->contribuinteModel->remover($identificador);
+    }
+    
     public function slugToCamelCase($string, $capitalizeFirstCharacter = false)
     {
         $str = str_replace('', '', ucwords(str_replace('_', ' ', $string)));

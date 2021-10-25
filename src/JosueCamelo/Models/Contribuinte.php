@@ -18,6 +18,11 @@ class Contribuinte extends BaseModel
     }
     
     public function inserir($data){
+        if($data['tipo_pessoa'] == 'Física'){
+            $data['nome_fantasia'] = '';
+        }
+        
+        
         $sql = "INSERT INTO `contribuintes` (`tipo_pessoa`, `tipo_contribuite`, `tipo_cadastro`, `documento`, `estado`, `ie`, `im`, ";
         $sql.= "`razao_social`, `nome_fantasia`, `telefone_principal`, `telefone_secundario`, `email`, `end_cep`, `end_logradouro`, ";
         $sql.= "`end_numero`, `end_complemento`, `end_bairro`, `end_cidade`, `end_pais`, `observacoes`)";
@@ -41,6 +46,10 @@ class Contribuinte extends BaseModel
     public function update($identificador, $data){
         $campoWhere = 'id';
         $busca = 0;
+    
+        if($data['tipo_pessoa'] == 'Física'){
+            $data['nome_fantasia'] = '';
+        }
         
         $sql = "UPDATE $this->table SET ";
         
@@ -61,18 +70,49 @@ class Contribuinte extends BaseModel
         if($busca == 0){
             throw new \Exception('Não foi possível localizar nenhum contribuinte com o identificador passado');
         }else{
-        
+            $sql .= " WHERE $campoWhere = '$identificador'";
+    
+            try {
+                $this->getQueryBuilder()->getConection()->beginTransaction();
+                $this->getQueryBuilder()->queryExec($sql, []);
+                $this->getQueryBuilder()->getConection()->commit();
+            }catch (Exception $e){
+                $this->getQueryBuilder()->getConection()->rollback();
+                throw $e;
+            }
         }
         
-        $sql .= " WHERE $campoWhere = '$identificador'";
+        return TRUE;
+    }
+    
+    public function remover($identificador){
+        $campoWhere = 'id';
+        $busca = 0;
         
-        try {
-            $this->getQueryBuilder()->getConection()->beginTransaction();
-            $this->getQueryBuilder()->queryExec($sql, []);
-            $this->getQueryBuilder()->getConection()->commit();
-        }catch (Exception $e){
-            $this->getQueryBuilder()->getConection()->rollback();
-            throw $e;
+        $sql = "DELETE FROM $this->table ";
+        
+        if(count($this->getId($identificador)) == 1){
+            $busca++;
+        }
+    
+        if(count($this->getByDocumento($identificador)) == 1){
+            $busca++;
+            $campoWhere = 'documento';
+        }
+    
+        if($busca == 0){
+            throw new \Exception('Não foi possível localizar nenhum contribuinte com o identificador passado');
+        }else{
+            $sql .= " WHERE $campoWhere = '$identificador'";
+        
+            try {
+                $this->getQueryBuilder()->getConection()->beginTransaction();
+                $this->getQueryBuilder()->queryExec($sql, []);
+                $this->getQueryBuilder()->getConection()->commit();
+            }catch (Exception $e){
+                $this->getQueryBuilder()->getConection()->rollback();
+                throw $e;
+            }
         }
     
         return TRUE;
